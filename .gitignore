@@ -1,0 +1,13 @@
+# Compiler output
+*.o
+*.a
+*.bin
+*.elf
+*.hex
+*.lst
+*.map
+
+
+# Third-Party firmware from ST
+cube/
+
