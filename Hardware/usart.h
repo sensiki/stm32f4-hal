@@ -18,7 +18,7 @@ extern "C"{
 UART_HandleTypeDef UART_Handler;
 
 uint8_t rx_buf[USART_RX_BUF_SIZE];
-uint8_t rx_buffer[RXBUFFERSIZE];
+uint8_t rxbuf;
 
 struct ring_buffer *rb;
 

@@ -5,7 +5,10 @@
 *.elf
 *.hex
 *.lst
+*.swp
 *.map
+*.out
+tags
 
 
 # Third-Party firmware from ST

@@ -11,7 +11,10 @@ void usart_init(ring_buffer *rb)
 	UART_Handler.Init.Parity = UART_PARITY_NONE;
 	UART_Handler.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	UART_Handler.Init.Mode = UART_MODE_TX_RX;		   
+
 	HAL_UART_Init(&UART_Handler);				
+	//HAL_UART_Receive_IT(&UART_Handler, (u8 *)rx_buffer, RXBUFFERSIZE);
+	HAL_UART_Receive_IT(&UART_Handler, &rxbuf, RXBUFFERSIZE);
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
@@ -22,26 +25,24 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 		__HAL_RCC_GPIOA_CLK_ENABLE();			
 		__HAL_RCC_USART1_CLK_ENABLE();			
 
-		GPIO_Initure.Pin = GPIO_PIN_9;			
+		GPIO_Initure.Pin = GPIO_PIN_9 | GPIO_PIN_10;			
 		GPIO_Initure.Mode = GPIO_MODE_AF_PP;		
 		GPIO_Initure.Pull = GPIO_PULLUP;		
 		GPIO_Initure.Speed = GPIO_SPEED_FAST;		
 		GPIO_Initure.Alternate = GPIO_AF7_USART1;	
 		HAL_GPIO_Init(GPIOA,&GPIO_Initure);	   	
 
-		GPIO_Initure.Pin = GPIO_PIN_10;			
-		HAL_GPIO_Init(GPIOA,&GPIO_Initure);	   
-
 		HAL_NVIC_EnableIRQ(USART1_IRQn);		
-		HAL_NVIC_SetPriority(USART1_IRQn, 3, 3);
+		HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
 	}
 }
 
 uint32_t usart_tx(const uint8_t *buf, uint32_t len) {
 	uint32_t txed = 0;
 
-	HAL_UART_Transmit(&UART_Handler, (u8 *)buf[txed++], len, 1000);
-	while(__HAL_UART_GET_FLAG(&UART_Handler, UART_FLAG_TC) != SET);	
+	HAL_UART_Transmit(&UART_Handler, (uint8_t *)buf, len, 1000);
+	while(__HAL_UART_GET_FLAG(&UART_Handler, UART_FLAG_TC) != SET);
+	txed++;
 
 	return txed;
 }
@@ -69,7 +70,6 @@ void usart_putudec(ring_buffer *rb, uint32_t val) {
 	}
 }
 
-
 void USART1_IRQHandler(void)                	
 { 
 	uint32_t timeout = 0;
@@ -82,12 +82,9 @@ void USART1_IRQHandler(void)
 		if(timeout > HAL_MAX_DELAY) break;		
 	}
 
-	timeout = 0;
-	while(HAL_UART_Receive_IT(&UART_Handler, (u8 *)rx_buffer, RXBUFFERSIZE) == HAL_OK){
-
-		rb_push_insert(rb, rx_buffer[0]);
+	while(HAL_UART_Receive_IT(&UART_Handler, &rxbuf, RXBUFFERSIZE) == HAL_OK){
+		usart_putc(rxbuf);
+		rb_push_insert(rb, rxbuf);
 	}
 } 
-
-
 
