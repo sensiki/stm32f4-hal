@@ -35,6 +35,8 @@ MCU_LC     = stm32f429xx
 MCU_MC     = STM32F429xx
 MCU_UC     = STM32F429ZI
 
+HSE_VALUE = 25000000L
+
 # path of the ld-file inside the example directories
 LDFILE     = Templates/SW4STM32/$(BOARD_UC)/$(MCU_UC)Tx_FLASH.ld
 
@@ -78,7 +80,7 @@ FLASH      = st-flash
 # Options
 
 # Defines
-DEFS       = -D$(MCU_MC) -DUSE_HAL_DRIVER
+DEFS       = -D$(MCU_MC) -DUSE_HAL_DRIVER -DHSE_VALUE=$(HSE_VALUE)
 
 # Debug specific definitions for semihosting
 DEFS       += -DUSE_DBPRINTF
