@@ -85,7 +85,8 @@ DEFS       += -DUSE_DBPRINTF
 
 # Include search paths (-I)
 INCS       = -ISrc
-INCS 	  += -IInc
+INCS 	  += -IHardware
+INCS 	  += -ISystem
 INCS      += -I$(BSP_DIR)
 INCS      += -I$(CMSIS_DIR)/Include
 INCS      += -I$(DEV_DIR)/Include
